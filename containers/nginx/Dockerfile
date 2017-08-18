@@ -8,7 +8,7 @@ FROM nginx:latest
 RUN rm /etc/nginx/conf.d/*.conf
 COPY ./containers/nginx/nginx.conf /etc/nginx/conf.d/
 
-RUN mkdir -p /usr/src
+RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 COPY app /usr/src/app
