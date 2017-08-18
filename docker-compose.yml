@@ -7,8 +7,6 @@ services:
     environment:
       - SENG365_MYSQL_HOST
       - SENG365_MYSQL_PORT
-    volumes:
-      - "./nginx.conf:/etc/nginx/nginx.conf"
   mysql:
     image: "mysql:5.7"
     environment:
