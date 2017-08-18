@@ -11,5 +11,7 @@ WORKDIR /usr/src/app
 # Bundle app source
 COPY . /usr/src/app
 
+RUN cat nginx.conf > /etc/nginx/conf.d/default.conf
+
 EXPOSE 4941
 CMD ["nginx", "-g", "'daemon off;'"]
