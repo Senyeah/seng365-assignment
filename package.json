@@ -5,6 +5,7 @@
     "start": "node test.js"
   },
   "dependencies": {
+    "express": "^4.15.4",
     "mysql": "^2.13.0"
   }
 }
