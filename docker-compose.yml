@@ -1,12 +1,21 @@
-version: "3"
+version: "2"
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: ./containers/nginx/Dockerfile
     ports:
       - "4563:4941"
     environment:
       - SENG365_MYSQL_HOST
       - SENG365_MYSQL_PORT
+    links:
+      - php
+  php:
+    build:
+      context: .
+      dockerfile: ./containers/php-fpm/Dockerfile
+    image: php:7-fpm
   mysql:
     image: "mysql:5.7"
     environment:
