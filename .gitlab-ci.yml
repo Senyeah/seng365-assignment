@@ -1,6 +1,6 @@
 cache:
   paths:
-  - node_modules/
+  - app/vendor/
 
 stages:
   - build
@@ -15,4 +15,4 @@ deploy:
   stage: deploy
   script:
   - docker-compose down --remove-orphans
-  - docker-compose up -d --build
+  - docker-compose up -d
