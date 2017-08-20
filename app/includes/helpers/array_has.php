@@ -27,14 +27,11 @@ function array_has($array, $property) {
 
 	} else if ($key == '*') {
 
-		return is_array($array) && count($array) > 0 &&
-			   array_reduce(
-				   $array,
-				   function ($carry, $sequential_item) use ($new_components) {
-					   return $carry && array_has($sequential_item, $new_components);
-				   },
-				   true
-			   );
+    	$test_each_item = function ($carry, $item) use ($new_components) {
+            return $carry && array_has($item, $new_components);
+        };
+
+		return array_reduce($array, $test_each_item, is_array($array) && count($array) > 0);
 
 	} else {
 
