@@ -24,6 +24,7 @@
 namespace APIEngine;
 
 require_once BASE_DIR . '/includes/api/APIError.php';
+require_once BASE_DIR . '/includes/helpers/array_has.php';
 
 class Request {
 
@@ -31,6 +32,7 @@ class Request {
     public $arguments;
     public $headers;
     public $user;
+    public $access_token;
 
     /**
 	 * Requires a set of parameters to be passed in $_REQUEST, or else an error
@@ -40,8 +42,8 @@ class Request {
 	 */
     function expect() {
 		foreach (func_get_args() as $argument) {
-			if (!isset($_REQUEST[$argument])) {
-				throw new \APIError(400, ucfirst($argument) . ' is required');
+			if (!array_has($_REQUEST, $argument)) {
+				throw new \APIError(400, "$argument is required");
 			}
 		}
 	}
@@ -53,8 +55,8 @@ class Request {
 	function expect_if($condition) {
 		if ($condition) {
 			foreach (array_slice(func_get_args(), 1) as $argument) {
-				if (!isset($_REQUEST[$argument])) {
-					throw new \APIError(400, ucfirst($argument) . ' is required');
+				if (!array_has($_REQUEST, $argument)) {
+					throw new \APIError(400, "$argument is required");
 				}
 			}
 		}
@@ -68,7 +70,7 @@ class Request {
 		$argument_set = false;
 
 		foreach (func_get_args() as $argument) {
-			if (isset($_REQUEST[$argument])) {
+			if (!array_has($_REQUEST, $argument)) {
 				$argument_set = true;
 				break;
 			}
