@@ -4,7 +4,6 @@ RUN apt-get update && apt-get install -yq git php-pear php7.0-dev libcurl4-opens
 
 # Copy source code
 
-RUN rm -rf /var/www/html
 ADD app /var/www/html
 WORKDIR /var/www/html
 
