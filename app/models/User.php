@@ -52,10 +52,10 @@ class User extends Model {
         }
 
         $user = new self();
-        $user_document = $user->collection->findOne(['id' => $id]);
+        $user_document = $user->collection->findOne(['id' => intval($id)]);
 
         $user->fill_properties_from($user_document);
-        $user->id = $id;
+        $user->id = intval($id);
 
         return $user;
 
