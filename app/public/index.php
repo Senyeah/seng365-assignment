@@ -32,6 +32,7 @@ require_once BASE_DIR . '/vendor/autoload.php';
 // Include globally-required dependencies
 
 require_once BASE_DIR . '/includes/constants.php';
+require_once BASE_DIR . '/includes/database/database.php';
 
 require_once BASE_DIR . '/engine/runtime.php';
 require_once BASE_DIR . '/engine/APIRequest.php';
