@@ -17,11 +17,16 @@ function array_has($array, $property) {
 	$key = array_shift($components);
 	$new_components = implode('.', $components);
 
-	if (isset($array[$key]) && is_array($array[$key]) == false) {
-		return in_array($property, array_keys($array));
-	}
+	if (empty($property)) {
 
-	if ($key == '*') {
+		return true;
+
+	} else if (isset($array[$key]) && is_array($array[$key]) == false) {
+
+		return in_array($property, array_keys($array));
+
+	} else if ($key == '*') {
+
 		return is_array($array) && count($array) > 0 &&
 			   array_reduce(
 				   $array,
@@ -30,9 +35,13 @@ function array_has($array, $property) {
 				   },
 				   true
 			   );
+
+	} else {
+
+		return in_array($key, array_keys($array)) && array_has($array[$key], $new_components);
+
 	}
 
-	return in_array($key, array_keys($array)) && array_has($array[$key], $new_components);
 
 }
 
