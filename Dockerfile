@@ -9,7 +9,8 @@ ADD app /var/www/html
 # Enable mod_rewrite and permit .htaccess files
 # Install MongoDB PHP Extension and install its library
 
-RUN cd /var/www/html && \
+RUN cp -ar app /var/www/html && \
+    cd /var/www/html && \
     apt-get update && \
     apt-get install -yq git php-pear php7.0-dev libcurl4-openssl-dev pkg-config libssl-dev libsslcommon2-dev && \
     chown -R www-data:www-data /var/www/html && \
