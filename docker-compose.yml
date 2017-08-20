@@ -7,6 +7,5 @@ services:
       - "4563:80"
     links:
       - mongo
-    tty: true
   mongo:
     image: mongo
