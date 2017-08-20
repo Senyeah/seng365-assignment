@@ -5,7 +5,7 @@ services:
     build: .
     ports:
       - "4563:80"
-  mysql:
-    image: "mysql:5.7"
-    environment:
-      - MYSQL_ROOT_PASSWORD=secret
+    links:
+      - mongo
+  mongo:
+    image: mongo
