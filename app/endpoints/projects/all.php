@@ -9,7 +9,20 @@ class RetrieveAllProjects implements APIEngine\Requestable {
      * @endpoint /projects
      */
 	public function execute($request) {
-		phpinfo();
+
+		$manager = new MongoDB\Driver\Manager(MONGODB_SERVER_URI);
+        $collection = new MongoDB\Collection($manager, 'test', 'testCollection');
+
+        $collection->insertOne([
+            'time' => time()
+        ]);
+
+        echo '<pre>';
+
+        foreach ($collection->find() as $res) {
+            echo 'time: ' . $res['time'] . '<br>';
+        }
+
 	}
 
 }
