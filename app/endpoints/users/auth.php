@@ -27,7 +27,7 @@ class LoginUser implements APIEngine\Requestable {
 
         $request->expect('username', 'password');
 
-        $token = AccessToken::from_authenticating($_REQUEST['username'], $_REQUEST['password']);
+        $token = AccessToken::by_authenticating($_REQUEST['username'], $_REQUEST['password']);
         $token->save();
 
         return $token;

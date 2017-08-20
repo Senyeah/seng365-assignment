@@ -19,7 +19,7 @@ class AccessToken extends Model {
      */
     public static function from_authenticating($username, $password) {
 
-        $user = User::from_authenticating($username, $password);
+        $user = User::authenticate($username, $password);
         $token = new AccessToken();
 
         $token->token = bin2hex(openssl_random_pseudo_bytes(32));

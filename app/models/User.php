@@ -65,7 +65,7 @@ class User extends Model {
      * Returns a user from a username and password if the credentials
      * supplied are valid
      */
-    public static function from_authenticating($username, $password) {
+    public static function authenticate($username, $password) {
 
         if (self::exists_with('username', $username) == false) {
             throw new APIError(400, 'Invalid username/password supplied');
