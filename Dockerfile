@@ -7,4 +7,7 @@ ADD app /var/www/html
 WORKDIR /var/www/html
 
 RUN composer install
+RUN chown -R www-data:www-data /var/www/html
 RUN sed -i '166s/None/All/' /etc/apache2/apache2.conf
+
+RUN tail -50 /var/log/apache2/error.log
