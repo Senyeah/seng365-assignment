@@ -3,14 +3,14 @@ FROM nimmis/apache-php7
 # Copy source code
 
 ADD app /var/www/html
-WORKDIR /var/www/html
 
 # Install packages
 # Fix Permissions
 # Enable mod_rewrite and permit .htaccess files
 # Install MongoDB PHP Extension and install its library
 
-RUN apt-get update && \
+RUN cd /var/www/html && \
+    apt-get update && \
     apt-get install -yq git php-pear php7.0-dev libcurl4-openssl-dev pkg-config libssl-dev libsslcommon2-dev && \
     chown -R www-data:www-data /var/www/html && \
     a2enmod rewrite && \
