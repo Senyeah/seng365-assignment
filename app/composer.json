@@ -1,0 +1,14 @@
+{
+    "name": "jcg63/crowdfunding-api",
+    "description": "SENG365 Crowdfunding API",
+    "type": "project",
+    "require": {
+        "mongodb/mongodb": "^1.1"
+    },
+    "authors": [
+        {
+            "name": "Jack Greenhill",
+            "email": "jcg63@uclive.ac.nz"
+        }
+    ]
+}
