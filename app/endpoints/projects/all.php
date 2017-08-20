@@ -1,12 +1,12 @@
 <?php
 
-require_once "../../engine/runtime.php";
+require_once BASE_DIR . '/engine/runtime.php';
 
 class RetrieveAllProjects implements APIEngine\Requestable {
 
     /**
      * @method GET
-     * @route /projects
+     * @endpoint /projects
      */
 	public function execute($request) {
 		phpinfo();

@@ -25,6 +25,10 @@
 
 define('BASE_DIR', getenv('BASE_DIR'));
 
+// Include Composer autoloader
+
+require_once BASE_DIR . '/vendor/autoload.php';
+
 // Include globally-required dependencies
 
 require_once BASE_DIR . '/includes/constants.php';
