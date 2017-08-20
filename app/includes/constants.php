@@ -12,6 +12,10 @@ define('REDIRECT_TREE_PATH', BASE_DIR . '/.definition.json');
 
 // Defines the MongoDB server location
 
-define("MONGODB_SERVER_URI", 'mongodb://mongo:27017');
+define('MONGODB_SERVER_URI', 'mongodb://mongo:27017');
+
+// MongoDB database name
+
+define('MONGODB_DATABASE_NAME', 'crowdfunding');
 
 ?>
