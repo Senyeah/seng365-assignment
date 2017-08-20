@@ -19,6 +19,6 @@ RUN sed -i '166s/None/All/' /etc/apache2/apache2.conf
 
 # Install MongoDB PHP Extension and install its library
 
-RUN pecl install mongodb || true
+RUN pecl install mongodb 1>/dev/null || true
 RUN sed -i '850s/.*/extension=mongodb.so/' /etc/php/7.0/apache2/php.ini
 RUN composer install --ignore-platform-reqs
