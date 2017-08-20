@@ -9,10 +9,10 @@ stages:
 build:
   stage: build
   script:
-  - docker-compose build --no-cache
+  - docker-compose build
 
 deploy:
   stage: deploy
   script:
   - docker-compose down --remove-orphans
-  - docker-compose up --force-recreate
+  - docker-compose up -d
