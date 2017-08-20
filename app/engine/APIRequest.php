@@ -23,6 +23,10 @@
 
 require_once 'RedirectEntry.php';
 
+require_once BASE_DIR . '/models/Model.php';
+require_once BASE_DIR . '/models/User.php';
+require_once BASE_DIR . '/models/AccessToken.php';
+
 use APIEngine\Method;
 
 class APIRequest {
@@ -86,13 +90,13 @@ class APIRequest {
 
         $provided_token = $request->headers['X-Authorization'];
 
-/*
         if (!is_null($provided_token)) {
-	        $request->user = AuthenticationManager::user_from_token($provided_token);
+            $request->access_token = AccessToken::from_existing_token($provided_token);
+	        $request->user = User::from_id($request->access_token->id);
         } else {
 	        $request->user = null;
+	        $request->access_token = null;
         }
-*/
 
         // Get the arguments and map them to their names
 
@@ -144,7 +148,20 @@ class APIRequest {
 
         if ($instance instanceof APIEngine\Requestable) {
 
-	        $instance->execute($request);
+            //Check to see if we must be authenticated
+
+            if ($instance->requires_authentication === true && is_null($request->user)) {
+                throw new APIError(401, 'Unauthorized');
+            }
+
+	        $returned = $instance->execute($request);
+
+	        // If a model was returned, cast it as a JSON response
+
+	        if ($returned instanceof Model) {
+                header('Content-Type: application/json');
+                echo json_encode($returned->serialized());
+	        }
 
         } else {
 	        throw new APIError(500, 'Class \'' . $desired_entry->class_name . '\' does not implement interface Requestable');
@@ -186,7 +203,7 @@ class APIRequest {
 		// Deserialize JSON-encoded requests
 
         if (in_array($this->method, [Method::POST, Method::PUT, Method::DELETE])) {
-            $_REQUEST = array_merge($_REQUEST, json_decode(file_get_contents('php://input'), true));
+            $_REQUEST = array_merge($_REQUEST, json_decode(file_get_contents('php://input'), true) ?? []);
         }
 
         // Only include nonempty arguments
