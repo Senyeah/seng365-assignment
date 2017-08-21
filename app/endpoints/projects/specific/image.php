@@ -20,11 +20,7 @@ class UpdateImage implements APIEngine\Requestable {
 
 		// Make sure they're an creator of the project
 
-		$creator_ids = array_map(function($creator) {
-            return $creator->id;
-		}, $project->creators);
-
-		if (in_array($request->user->id, $creator_ids) == false) {
+		if ($project->is_creator($request->user) == false) {
     		throw new APIError(403, 'Attempt to update a project you do not own');
 		}
 
@@ -54,7 +50,8 @@ class UpdateImage implements APIEngine\Requestable {
 
     		//Update the image URL
 
-    		$project->imageUri = "http://$_SERVER[HTTP_HOST]/projects/$project_id/image";
+    		$project->image_uri = "http://$_SERVER[HTTP_HOST]/api/v1/projects/$project_id/image";
+    		http_response_code(201);
 
 		}
 
@@ -75,7 +72,7 @@ class RetrieveImage implements APIEngine\Requestable {
         $project_id = intval($request->arguments['id']);
         $project_image = ProjectImage::from_project_id($project_id);
 
-        header('Content-Type: image/jpeg');
+        header('Content-Type: image/png');
         echo $project_image->image_data;
 
 	}

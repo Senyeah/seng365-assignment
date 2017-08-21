@@ -30,19 +30,26 @@ class Project extends Model {
     public $backers;
 
     /**
+     * Used to determine permissions for backer anonymity
+     */
+    public $current_user_id;
+
+    /**
      * Exclude these properties from the schema
      */
     protected $exclude = [
         'creators',
         'rewards',
-        'backers'
+        'backers',
+        'current_user_id'
     ];
 
     /**
      * Exclude these properties from the serialization
      */
     protected $hidden = [
-        'open'
+        'open',
+        'current_user_id'
     ];
 
     /**
@@ -130,6 +137,19 @@ class Project extends Model {
     }
 
     /**
+     * Returns if a given user ID is a creator of a project
+     */
+    public function is_creator($user) {
+
+		$creator_ids = array_map(function($creator) {
+            return $creator->id;
+		}, $this->creators);
+
+		return in_array($user->id, $creator_ids);
+
+    }
+
+    /**
      * Saves all foreign models and the current model
      */
     public function save() {
@@ -162,15 +182,47 @@ class Project extends Model {
     }
 
     /**
+     * Summarises all backers and excludes anonymous pledges
+     */
+    public function compute_backers() {
+
+        $backers = [];
+
+        foreach ($this->backers as $backer) {
+
+            if ($backer->anonymous && $backer->user_id != $this->current_user_id) {
+                continue;
+            }
+
+            //If they aren't anonymous, group successive pledges
+
+            if (isset($backers[$backer->user_id])) {
+                $backers[$backer->user_id]['amount'] += $backer->amount;
+            } else {
+                $backers[$backer->user_id] = [
+                    'amount' => $backer->amount,
+                    'name' => $backer->name
+                ];
+            }
+        }
+
+        return array_values($backers);
+
+    }
+
+    /**
      * Returns an array containing computed project progress
      */
     public function compute_progress() {
+
+        $backer_ids = array_map(function($pledge) {
+            return $pledge->user_id;
+        }, $this->backers);
+
         return [
             'target' => $this->target,
             'currentPledged' => $this->get_amount_pledged(),
-            'numberOfBackers' => count(array_filter($this->backers, function($backer) {
-                return $backer->anonymous == false;
-            }))
+            'numberOfBackers' => count(array_unique($backer_ids))
         ];
     }
 
@@ -192,7 +244,6 @@ class Project extends Model {
     public function formatted_reponse() {
 
         $project = parent::serialized();
-        $backers = $project['backers'];
 
         //Several keys have to be moved under the `data` key
 
@@ -213,7 +264,7 @@ class Project extends Model {
         return [
             'project' => $project,
             'progress' => $this->compute_progress(),
-            'backers' => $backers
+            'backers' => $this->compute_backers()
         ];
 
     }

@@ -93,6 +93,8 @@ class RetrieveProject implements APIEngine\Requestable {
 	public function execute($request) {
 
 		$project = Project::from_id(intval($request->arguments['id']));
+        $project->current_user_id = $request->user->id ?? null;
+
 		return $project->formatted_reponse();
 
 	}

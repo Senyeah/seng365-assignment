@@ -34,12 +34,16 @@ class PledgeProject implements APIEngine\Requestable {
         $project_id = intval($request->arguments['id']);
         $project = Project::from_id($project_id);
 
-        $backer = new ProjectBacker();
+        if ($project->is_creator($request->user)) {
+            throw new APIError(403, 'Cannot pledge to your own project');
+        }
 
-        $backer->unserialize_from($_REQUEST);
-        $backer->project_id = $project_id;
-
-        $project->backers[] = $backer;
+        $project->backers[] = ProjectBacker::new_from_model([
+           'user_id' => $request->user->id,
+           'project_id' => $_REQUEST['id'],
+           'amount' => $_REQUEST['amount'],
+           'anonymous' => $_REQUEST['anonymous']
+        ], $project_id);
 
         $project->save();
 

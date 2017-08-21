@@ -5,18 +5,34 @@ require_once BASE_DIR . '/models/Model.php';
 class ProjectBacker extends Model {
 
     const COLLECTION_NAME = 'ProjectBackers';
-    const PRIMARY_KEY = ['id', 'project_id'];
+    const PRIMARY_KEY = 'id';
 
     /**
      * Model properties
      */
-    public $project_id;
     public $id;
+    public $project_id;
+    public $user_id;
     public $amount;
     public $anonymous;
 
+    /**
+     * Computed properties
+     */
+    public $name;
+
+    /**
+     * Hide from the serialisation
+     */
     protected $hidden = [
-        'anonymous'
+        'project_id', 'id', 'user_id', 'anonymous'
+    ];
+
+    /**
+     * Don't save in the database
+     */
+    protected $exclude = [
+        'name'
     ];
 
     public static function new_from_model($model, $project_id) {
@@ -25,6 +41,8 @@ class ProjectBacker extends Model {
         $backer->unserialize_from($model);
 
         $backer->project_id = $project_id;
+        $backer->name = User::from_id($backer->user_id)->username;
+        $backer->id = ProjectBacker::next_backer_id();
 
         return $backer;
 
@@ -40,8 +58,10 @@ class ProjectBacker extends Model {
 
         return array_map(function($backer_document) {
 
-            $backer = new ProjectReward();
+            $backer = new ProjectBacker();
             $backer->unserialize_from($backer_document);
+
+            $backer->name = User::from_id($backer->user_id)->username;
 
             return $backer;
 
@@ -50,17 +70,16 @@ class ProjectBacker extends Model {
     }
 
     /**
-     * override the default behaviour so anonymous pledgers aren't visible
+     * Returns the next available backer ID
      */
-    public function serialized($include_hidden = false, $to_camelcase = true) {
+    public static function next_backer_id() {
 
-        $result = parent::serialized($include_hidden, $to_camelcase);
+		$collection = Database::collection(self::COLLECTION_NAME);
 
-        if ($this->anonymous && $request->user->id != $this->id) {
-            return [];
-        }
+		$sorted_backers = $collection->find([], ['sort' => ['id' => -1], 'limit' => 1])->toArray();
+		$current_max_id = $sorted_backers[0]['id'] ?? 0;
 
-        return $result;
+		return $current_max_id + 1;
 
     }
 
