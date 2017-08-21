@@ -39,7 +39,6 @@ function array_has($array, $property) {
 
 	}
 
-
 }
 
 ?>

@@ -17,7 +17,7 @@ class AccessToken extends Model {
     /**
      * Generates an access token by authenticating a given username and password
      */
-    public static function from_authenticating($username, $password) {
+    public static function by_authenticating($username, $password) {
 
         $user = User::authenticate($username, $password);
         $token = new AccessToken();
@@ -42,7 +42,7 @@ class AccessToken extends Model {
         }
 
         $token = new AccessToken();
-        $token->fill_properties_from($token_document);
+        $token->unserialize_from($token_document);
 
         return $token;
 
@@ -59,7 +59,7 @@ class AccessToken extends Model {
         foreach ($collection->find(['id' => $user->id]) as $token_document) {
 
             $token = new AccessToken();
-            $token->fill_properties_from($token_document);
+            $token->unserialize_from($token_document);
 
             $tokens[] = $token;
 

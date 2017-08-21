@@ -23,6 +23,7 @@
 
 require_once 'RedirectEntry.php';
 
+require_once BASE_DIR . '/includes/helpers/RequiresAuthenticationTrait.php';
 require_once BASE_DIR . '/models/Model.php';
 require_once BASE_DIR . '/models/User.php';
 require_once BASE_DIR . '/models/AccessToken.php';
@@ -33,8 +34,10 @@ class APIRequest {
 
 	private $method;
 	private $arguments;
+	private $headers;
 
 	private $redirect_tree;
+	private $uploaded_files;
 
 	/**
 	 * This traverses the given redirect tree for a given request method and components.
@@ -83,12 +86,12 @@ class APIRequest {
 		$request = new APIEngine\Request();
 
         $request->method = $this->method;
-        $request->headers = apache_request_headers();
+        $request->headers = $this->headers;
         $request->arguments = [];
 
         // Attempt to extract their access token from the provided headers
 
-        $provided_token = $request->headers['X-Authorization'];
+        $provided_token = $request->headers['X-Authorization'] ?? null;
 
         if (!is_null($provided_token)) {
             $request->access_token = AccessToken::from_existing_token($provided_token);
@@ -111,7 +114,7 @@ class APIRequest {
     /**
      * Invokes the class specified in the redirect entry
      */
-	function execute() {
+	public function execute() {
 
 		// Firstly, find the corresponding redirect entry and make sure there's something
 		// to actually execute
@@ -148,9 +151,11 @@ class APIRequest {
 
         if ($instance instanceof APIEngine\Requestable) {
 
-            //Check to see if we must be authenticated
+            // Check to see if we must be authenticated
 
-            if ($instance->requires_authentication === true && is_null($request->user)) {
+            if (in_array('RequiresAuthentication', class_uses($desired_entry->class_name))
+                && is_null($request->user)) {
+
                 throw new APIError(401, 'Unauthorized');
             }
 
@@ -158,9 +163,9 @@ class APIRequest {
 
 	        // If a model was returned, cast it as a JSON response
 
-	        if ($returned instanceof Model) {
+	        if ($returned instanceof Model || is_array($returned)) {
                 header('Content-Type: application/json');
-                echo json_encode($returned->serialized());
+                echo json_encode($returned instanceof Model ? $returned->serialized() : $returned);
 	        }
 
         } else {
@@ -172,7 +177,7 @@ class APIRequest {
 	/**
 	 * Gets the redirect tree from the cache or from memory, if the cache does not have it stored.
 	 */
-	function get_redirect_tree() {
+	private function get_redirect_tree() {
 
 		if (!file_exists(REDIRECT_TREE_PATH)) {
 			throw new APIError(500, 'The endpoint definition file does not exist');
@@ -183,10 +188,73 @@ class APIRequest {
 
 	}
 
+	/**
+     * Parses a file and its header form a multipart/form-data upload request
+     */
+	private function parse_multipart_header($data, $boundary) {
+
+        $headers = substr($data, 0, $boundary);
+
+        // Parse the headers
+
+        preg_match('/Content-Disposition: (.*)\r\nContent-Type: (.*)/i', $headers, $parsed_meta_headers);
+        preg_match('/name="(.*)";.*filename="(.*)".*/', $parsed_meta_headers[1], $parsed_headers);
+
+        return [
+            'name' => $parsed_headers[1],
+            'filename' => $parsed_headers[2],
+            'mime' => $parsed_meta_headers[2]
+        ];
+
+	}
+
+	/**
+     * Handles a file upload by reading information from the php://input stream.
+     * Adds it to the $_FILES array, the same as a POST request would.
+     */
+	private function handle_put_file_upload() {
+
+    	preg_match('/boundary=(.*)/', $_SERVER['CONTENT_TYPE'], $boundary);
+
+    	$data = file_get_contents('php://input');
+        $file_components = explode('--' . $boundary[1], $data);
+
+        foreach ($file_components as $file_data) {
+
+            $file_header_boundary = strpos($file_data, "\r\n\r\n");
+
+            if ($file_header_boundary === false) {
+                continue;
+            }
+
+            $file = substr($file_data, $file_header_boundary + 4, -2);
+            $headers = $this->parse_multipart_header($file_data, $file_header_boundary);
+
+            $tmp_filename = '/tmp/php' . bin2hex(openssl_random_pseudo_bytes(3));
+            file_put_contents($tmp_filename, $file);
+
+            $this->uploaded_files[] = $tmp_filename;
+
+            $_FILES[$headers['name']] = [
+                'name' => $headers['filename'],
+                'type' => $headers['mime'],
+                'tmp_name' => $tmp_filename,
+                'size' => strlen($file),
+                'error' => UPLOAD_ERR_OK
+            ];
+
+        }
+
+	}
+
     /**
      * Constructs the request
      */
 	function __construct() {
+
+    	// Add request headers
+
+    	$this->headers = apache_request_headers();
 
       	// Determine their request method
 
@@ -206,12 +274,33 @@ class APIRequest {
             $_REQUEST = array_merge($_REQUEST, json_decode(file_get_contents('php://input'), true) ?? []);
         }
 
+        // Are they uploading a file via PUT?
+        // PHP doesn't add it to the $_FILES array unless it's a POST
+
+        if ($this->method == Method::PUT && strpos($_SERVER['CONTENT_TYPE'], 'boundary') !== false) {
+            $this->uploaded_files = [];
+            $this->handle_put_file_upload();
+        }
+
         // Only include nonempty arguments
 
         $this->arguments = array_filter(explode('/', $_REQUEST['arguments']), function($value) {
 	        return $value !== '';
 	    });
 
+	    // Leaving them there can screw with validation
+
+	    unset($_REQUEST['arguments']);
+
+	}
+
+	/**
+     * Deletes any uploaded files in the /tmp directory
+     */
+	function __destruct() {
+        foreach ($this->uploaded_files ?? [] as $file) {
+            unlink($file);
+        }
 	}
 
 }

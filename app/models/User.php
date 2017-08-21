@@ -23,7 +23,7 @@ class User extends Model {
     /**
      * Exclude these properties from being serialised
      */
-    protected $exclude = [
+    protected $hidden = [
         'password'
     ];
 
@@ -33,7 +33,7 @@ class User extends Model {
     public static function new_from_model($params, $password) {
 
         $user = new self();
-        $user->fill_properties_from($params);
+        $user->unserialize_from($params);
 
         $user->id = $user->get_random_id();
         $user->set_password($password);
@@ -54,7 +54,7 @@ class User extends Model {
         $user = new self();
         $user_document = $user->collection->findOne(['id' => intval($id)]);
 
-        $user->fill_properties_from($user_document);
+        $user->unserialize_from($user_document);
         $user->id = intval($id);
 
         return $user;

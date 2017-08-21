@@ -1,6 +1,5 @@
 <?php
 
-require_once BASE_DIR . '/engine/runtime.php';
 require_once BASE_DIR . '/models/User.php';
 
 class CreateUser implements APIEngine\Requestable {
@@ -65,7 +64,7 @@ class RetrieveUser implements APIEngine\Requestable {
 
 class UpdateUser implements APIEngine\Requestable {
 
-    public $requires_authentication = true;
+    use RequiresAuthentication;
 
     /**
      * @method PUT
@@ -110,7 +109,7 @@ class UpdateUser implements APIEngine\Requestable {
             throw new APIError(400, 'Username must be unique');
         }
 
-    	$request->user->fill_properties_from($_REQUEST['user']);
+    	$request->user->unserialize_from($_REQUEST['user']);
 
     	$request->user->set_password($_REQUEST['password']);
     	$request->user->id = intval($provided_user->id);
@@ -123,7 +122,7 @@ class UpdateUser implements APIEngine\Requestable {
 
 class DeleteUser implements APIEngine\Requestable {
 
-    public $requires_authentication = true;
+    use RequiresAuthentication;
 
     /**
      * @method DELETE

@@ -1,6 +1,6 @@
 <?php
 
-require_once BASE_DIR . '/engine/runtime.php';
+require_once BASE_DIR . '/models/Project.php';
 
 class RetrieveAllProjects implements APIEngine\Requestable {
 
@@ -10,18 +10,8 @@ class RetrieveAllProjects implements APIEngine\Requestable {
      */
 	public function execute($request) {
 
-		$manager = new MongoDB\Driver\Manager(MONGODB_SERVER_URI);
-        $collection = new MongoDB\Collection($manager, 'test', 'testCollection');
-
-        $collection->insertOne([
-            'time' => time()
-        ]);
-
-        echo '<pre>';
-
-        foreach ($collection->find() as $res) {
-            echo 'time: ' . $res['time'] . '<br>';
-        }
+        $request->expect('startIndex', 'count');
+		return Project::all(intval($_REQUEST['startIndex']), intval($_REQUEST['count']));
 
 	}
 

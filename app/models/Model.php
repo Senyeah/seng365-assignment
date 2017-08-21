@@ -20,10 +20,37 @@ class Model {
     }
 
     /**
+     * Converts all keys in $array from slug_case to camelCase
+     */
+    private function replace_keys($array) {
+
+        $return = [];
+
+        foreach ($array as $key => $value) {
+            $new_key = preg_replace_callback(
+                '/[_](.)/',
+                function($match) {
+                    return strtoupper($match[1]);
+                },
+                $key
+            );
+
+            if (is_array($value)) {
+                $value = $this->replace_keys($value);
+            }
+
+            $return[$new_key] = $value;
+        }
+
+        return $return;
+
+    }
+
+    /**
      * Converts the model object into an array form, ready for sending/saving.
      * Excludes properties from the $hidden array
      */
-    public function serialized($include_hidden = false) {
+    public function serialized($include_hidden = false, $to_camelcase = true) {
 
         $exclude = array_merge(
             $include_hidden ? [] : ($this->hidden ?? []),
@@ -34,18 +61,20 @@ class Model {
 
         // If there are models inside this model, serialize those too
 
-        array_walk($instance_variables, function(&$ivar) {
+        array_walk_recursive($instance_variables, function(&$ivar) {
             $ivar = $ivar instanceof Model ? $ivar->serialized() : $ivar;
         });
 
-        return array_diff_key($instance_variables, array_flip($exclude));
+        $serialised = array_diff_key($instance_variables, array_flip($exclude));
+
+        return $to_camelcase ? $this->replace_keys($serialised) : $serialised;
 
     }
 
     /**
      * Sets fillable properties from an array
      */
-    public function fill_properties_from($properties) {
+    public function unserialize_from($properties) {
         foreach ($properties as $key => $value) {
             if (in_array($key, array_keys(get_object_vars($this)))) {
                 $this->$key = $value;
@@ -54,9 +83,9 @@ class Model {
     }
 
     /**
-     * Updates or inserts the model
+     * Gets the primary key in the form for Mongo requests
      */
-    public function save() {
+    private function get_primary_key() {
 
         $primary_key = static::PRIMARY_KEY;
         $unique_attributes = [];
@@ -71,15 +100,24 @@ class Model {
             $unique_attributes = [$primary_key => $this->$primary_key];
         }
 
+        return $unique_attributes;
+
+    }
+
+    /**
+     * Updates or inserts the model
+     */
+    public function save() {
+
         // Some attributes can never be saved
 
         $always_exclude = array_merge($this->exclude ?? [], self::ATTRIBUTES_ALWAYS_HIDDEN);
-        $attributes = array_diff_key($this->serialized(true), array_flip($always_exclude));
+        $attributes = array_diff_key($this->serialized(true, false), array_flip($always_exclude));
 
         // Save the thing
 
         $this->collection->updateOne(
-            $unique_attributes,
+            $this->get_primary_key(),
             ['$set' => $attributes],
             ['upsert' => true]
         );
@@ -90,8 +128,7 @@ class Model {
      * Deletes the model instance from the collection
      */
     public function delete() {
-        $primary_key = static::PRIMARY_KEY;
-        $this->collection->deleteOne([$primary_key => $this->$primary_key]);
+        $this->collection->deleteOne($this->get_primary_key());
     }
 
 }

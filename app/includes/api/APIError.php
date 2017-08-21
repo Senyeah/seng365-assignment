@@ -21,8 +21,6 @@
  * @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
  */
 
-require_once 'AcceptHeader.php';
-
 /**
  * Represents an exception which occurs due to user action, for example
  * having bad request parameters or by not being authorised.
@@ -70,23 +68,6 @@ set_exception_handler(function($exception) {
 
 	    $code = $exception instanceof APIError ? $exception->getCode() : 500;
 
-		// Parse the accept encodings sent by the user agent
-
-	    $headers = new AcceptHeader($_SERVER['HTTP_ACCEPT']);
-
-	    // Get all of the encodings the user agent supports
-
-	    $accept_encodings = array_map(function($item) {
-		    return $item['raw'];
-		}, $headers->getArrayCopy());
-
-	    // Generate a human readable format if that's what they are requesting
-
-	    $human_readable = in_array('application/json', $accept_encodings) == false &&
-	                      in_array('text/html', $accept_encodings);
-
-		$mask = $human_readable ? JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT : 0;
-
 		// Set the response code and content type
 
 	    http_response_code($code);
@@ -106,7 +87,7 @@ set_exception_handler(function($exception) {
 
 	    // Actually deliver the message to them now
 
-		echo json_encode($response, $mask);
+		echo json_encode($response);
 
 	}
 

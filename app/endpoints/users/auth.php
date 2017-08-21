@@ -1,11 +1,10 @@
 <?php
 
-require_once BASE_DIR . '/engine/runtime.php';
 require_once BASE_DIR . '/models/AccessToken.php';
 
 class LogoutUser implements APIEngine\Requestable {
 
-    public $requires_authentication = true;
+    use RequiresAuthentication;
 
     /**
      * @method POST
