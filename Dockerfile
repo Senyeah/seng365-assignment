@@ -9,7 +9,7 @@
 # ==================================================================================
 #
 
-FROM nimmis/apache-php7
+FROM nimmis/apache-php7:latest
 
 # Copy source code
 

@@ -9,6 +9,7 @@ stages:
 build:
   stage: build
   script:
+  - docker network prune
   - docker-compose build
 
 deploy:
