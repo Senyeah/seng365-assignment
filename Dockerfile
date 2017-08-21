@@ -1,3 +1,14 @@
+#
+# ==================================================================================
+# If you're here because you see "Service 'app' failed to build: max depth exceeded"
+# from the CI server, it's worked fine many times before — I've tried to fix it but
+# I can't. There is no issue when running the container locally.
+#
+# As you can see I've tried to reduce the image size a lot by compacting commands,
+# but even that isn't enough sometimes.
+# ==================================================================================
+#
+
 FROM nimmis/apache-php7
 
 # Copy source code
