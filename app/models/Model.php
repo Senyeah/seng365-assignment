@@ -6,6 +6,11 @@
 class Model {
 
     /**
+     * Attributes which should never be saved
+     */
+    const ATTRIBUTES_ALWAYS_HIDDEN = ['hidden', 'collection', 'exclude'];
+
+    /**
      * Store a reference to our collection
      */
     public $collection;
@@ -16,13 +21,13 @@ class Model {
 
     /**
      * Converts the model object into an array form, ready for sending/saving.
-     * Excludes properties from the $exclude array
+     * Excludes properties from the $hidden array
      */
-    public function serialized($include_excluded = false) {
+    public function serialized($include_hidden = false) {
 
         $exclude = array_merge(
-            $include_excluded ? [] : ($this->exclude ?? []),
-            ['exclude', 'collection']
+            $include_hidden ? [] : ($this->hidden ?? []),
+            self::ATTRIBUTES_ALWAYS_HIDDEN
         );
 
         $instance_variables = get_object_vars($this);
@@ -54,10 +59,28 @@ class Model {
     public function save() {
 
         $primary_key = static::PRIMARY_KEY;
+        $unique_attributes = [];
+
+        // Primary keys may contain more than one attribute
+
+        if (is_array($primary_key)) {
+            foreach ($primary_key as $attribute) {
+                $unique_attributes[$attribute] = $this->$attribute;
+            }
+        } else {
+            $unique_attributes = [$primary_key => $this->$primary_key];
+        }
+
+        // Some attributes can never be saved
+
+        $always_exclude = array_merge($this->exclude ?? [], self::ATTRIBUTES_ALWAYS_HIDDEN);
+        $attributes = array_diff_key($this->serialized(true), array_flip($always_exclude));
+
+        // Save the thing
 
         $this->collection->updateOne(
-            [$primary_key => $this->$primary_key],
-            ['$set' => $this->serialized(true)],
+            $unique_attributes,
+            ['$set' => $attributes],
             ['upsert' => true]
         );
 
