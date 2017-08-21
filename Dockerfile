@@ -18,3 +18,5 @@ RUN cd /var/www/html && \
     pecl install mongodb 1>/dev/null || true && \
     sed -i '850s/.*/extension=mongodb.so/' /etc/php/7.0/apache2/php.ini && \
     composer install --ignore-platform-reqs
+
+CMD apachectl -DFOREGROUND
