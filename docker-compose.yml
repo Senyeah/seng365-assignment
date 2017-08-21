@@ -1,7 +1,7 @@
 version: "2"
 services:
   app:
-    image: nimmis/apache-php7
+    image: nimmis/apache-php7:latest
     build: .
     ports:
       - "4563:80"
