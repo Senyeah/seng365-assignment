@@ -9,6 +9,7 @@ stages:
 build:
   stage: build
   script:
+  - docker rmi nimmis/apache-php7
   - docker-compose build
 
 deploy:
