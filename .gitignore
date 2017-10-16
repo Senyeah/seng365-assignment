@@ -1,1 +1,5 @@
-app/vendor/
+node_modules/
+webpack_cache/
+app/bundle.js
+app/resources/style.css
+.DS_Store

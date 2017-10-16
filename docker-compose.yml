@@ -1,11 +1,9 @@
 version: "2"
 services:
   app:
-    image: nimmis/apache-php7:latest
+    image: node:latest
     build: .
+    working_dir: /home/node/app
     ports:
-      - "4563:80"
-    links:
-      - mongo
-  mongo:
-    image: mongo
+      - "4563:8080"
+    command: "npm start"
