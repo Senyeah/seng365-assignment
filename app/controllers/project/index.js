@@ -26,8 +26,6 @@ class ProjectViewController {
 
         // Does the current user own it?
 
-        console.log("HELLO", this.User.isLoggedIn);
-
         this.currentUserOwnsProject = this.User.isLoggedIn &&
                                       this.project.creators
                                             .map(creator => parseInt(creator.id))
@@ -41,6 +39,15 @@ class ProjectViewController {
     async close() {
         await this.Project.close(this.$state.params.id);
         this.$state.go('.', {}, {reload: true});
+    }
+
+    async updateImage() {
+
+        const formData = new FormData(document.querySelector('form'));
+        await this.Project.uploadImage(this.$state.params.id, formData.get('image'));
+
+        this.$state.go('.', {}, {reload: true});
+
     }
 
     constructor(Project, Content, User, $rootScope, $scope, $state) {

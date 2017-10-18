@@ -76,7 +76,12 @@ export class ProjectService {
      */
     async uploadImage(id, formData) {
 
-        await this.$http.put(`/projects/${id}`, formData);
+        await this.$http.put(`/projects/${id}/image`, formData, {
+            headers: {
+                'Content-Type': undefined
+            },
+            transformRequest: angular.identity
+        });
 
     }
 

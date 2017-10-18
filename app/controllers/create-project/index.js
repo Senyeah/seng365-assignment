@@ -44,12 +44,22 @@ class CreateProjectViewController {
         this.Content.addDeferred(createPromise);
         const id = await createPromise;
 
-        // Now upload the image if there is one
+        try {
 
-        const formData = new FormData(document.querySelector('form'));
-        await this.Project.uploadImage(id, formData);
+            // Now upload the image if there is one
 
-        this.$state.go('project', {id});
+            const formData = new FormData(document.querySelector('form'));
+            await this.Project.uploadImage(id, formData.get('image'));
+
+        } catch (e) {
+
+            throw e;
+
+        } finally {
+
+            this.$state.go('project', {id});
+
+        }
 
     }
 

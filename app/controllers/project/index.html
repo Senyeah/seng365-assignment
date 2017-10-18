@@ -20,7 +20,10 @@
             class="filled danger">
         Close Project
     </button>
-    <button class="filled">Upload Image</button>
+    <button ng-click="projectCtrl.updateImage()" class="filled">Upload New Image</button>
+    <form id="replace-image" method="put" enctype="multipart/form-data">
+        <input type="file" name="image">
+    </form>
 </div>
 <article>
     <aside id="project-info">
