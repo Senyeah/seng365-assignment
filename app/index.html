@@ -1,15 +1,31 @@
 <!DOCTYPE html>
 <html ng-app="seng365-assignment" ng-cloak ng-strict-di>
     <head>
-        <title>Assignment</title>
+        <title ng-bind="title"></title>
 
-        <meta charset="UTF-8">
+        <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <base href="/">
         <link rel="stylesheet" href="style.css">
     </head>
-    <body ui-view>
+    <body>
+        <loading-modal></loading-modal>
+
+        <nav>
+            <img id="logo" ui-sref="main" src="/resources/images/logo.svg">
+            <div>
+                <a class="outlined" ui-sref="create-project" ng-if="User.isLoggedIn">Create Project</a>
+                <a class="filled" ng-click="User.logout()" ng-if="User.isLoggedIn">Sign Out</a>
+
+                <a class="outlined" ui-sref="sign-in" ng-if="!User.isLoggedIn">Sign In</a>
+                <a class="filled sign-up" ui-sref="sign-up" ng-if="!User.isLoggedIn">Create Account</a>
+            </div>
+        </nav>
+
+        <h1 ng-bind="title"></h1>
+        <main ui-view></main>
+
         <script src="bundle.js"></script>
     </body>
 </html>

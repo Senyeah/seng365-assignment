@@ -1,0 +1,15 @@
+@import 'variables';
+
+.progress-indicator {
+    background-color: darken($background-hint, 10%);
+    border-radius: 20px;
+    overflow: hidden;
+
+    > div {
+        background-color: $hint;
+    }
+}
+
+.progress-indicator, .progress-indicator > div {
+    height: 15px;
+}

@@ -1,0 +1,22 @@
+section#sign-in > div {
+    width: 500px;
+    margin: 0 auto;
+
+    display: flex;
+    flex-direction: column;
+
+    input {
+        margin: 0 0 1rem;
+        padding: 1rem;
+    }
+}
+
+#error-message, #info-message {
+    margin: 0 0 2rem;
+    font-weight: 500;
+    font-size: 12pt;
+}
+
+#error-message {
+    color: red;
+}

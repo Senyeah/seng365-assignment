@@ -1,0 +1,102 @@
+/**
+ * Load the base font "Inter UI" from their server
+ */
+@import url('https://rsms.me/inter/inter-ui.css');
+@import 'variables';
+
+[ng-cloak] {
+    display: none !important;
+}
+
+%container {
+    margin: 0 auto;
+    width: $container-width;
+}
+
+%spaced-header {
+    display: flex;
+
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+body {
+    @extend %container;
+
+    font-family: 'Inter UI', sans-serif;
+    padding-bottom: 3rem;
+
+    #logo {
+        height: 60px;
+        cursor: pointer;
+    }
+}
+
+nav {
+    @extend %spaced-header;
+
+    align-items: center;
+    align-content: center;
+
+    margin: 3rem 0 3.5rem;
+
+    > div {
+        display: flex;
+        flex-direction: row;
+
+        a {
+            margin: 0 0.3rem;
+        }
+    }
+
+    & + h1 {
+        font-size: 2.5rem;
+    }
+}
+
+/**
+ * Anchors which are filled (see Create Account button)
+ */
+.outlined, .filled {
+    display: block;
+
+    padding: 0.75rem 1rem;
+    outline: none;
+
+    text-decoration: none;
+    font-weight: 500;
+    font-size: inherit;
+    text-align: center;
+
+    border: 3px solid $hint;
+    border-radius: 5px;
+
+    cursor: pointer;
+    transition: 0.2s background-color;
+
+}
+
+.filled, .outlined:hover {
+    background-color: $hint;
+    color: white;
+
+    &:hover {
+        background-color: darken($hint, 2%);
+    }
+
+    &:active {
+        background-color: darken($hint, 5%);
+    }
+
+    &.disabled, &[disabled] {
+        background-color: darken($background-hint, 7%);
+        border-color: darken($background-hint, 7%);
+
+        color: $disabled-text;
+        cursor: not-allowed;
+    }
+}
+
+.outlined {
+    color: $hint;
+}

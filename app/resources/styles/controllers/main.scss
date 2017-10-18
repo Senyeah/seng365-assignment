@@ -1,0 +1,16 @@
+@import 'variables';
+@import 'global';
+
+section.full-screen {
+    width: 100vw;
+    background-color: $background-hint;
+
+    margin-left: calc((100vw - #{$container-width}) / -2);
+    padding: 3rem 0;
+
+    > [ui-view] {
+        @extend %container;
+    }
+}
+
+

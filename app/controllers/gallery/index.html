@@ -1,0 +1,51 @@
+<header role="search">
+    <input type="search" ng-model="galleryCtrl.query" placeholder="Filter projects…">
+
+    <button class="filled"
+            ng-disabled="!galleryCtrl.hasModifiedQuery"
+            ng-click="galleryCtrl.search({query: galleryCtrl.query})">
+        Search
+    </button>
+</header>
+<div id="results-filter" ng-if="User.isLoggedIn && !galleryCtrl.query">
+    <a ui-sref=".({})" ui-sref-opts="{reload: true, inherit: false}"
+       ng-class="{filled: galleryCtrl.filterMode == 'all',
+                  outlined: galleryCtrl.filterMode != 'all'}">
+        Show all projects
+    </a>
+    <a ui-sref=".({only: 'backed'})" ui-sref-opts="{reload: true, inherit: false}"
+       ng-class="{filled: galleryCtrl.filterMode == 'backed',
+                  outlined: galleryCtrl.filterMode != 'backed'}">
+        Show only projects I’ve backed
+    </a>
+    <a ui-sref=".({only: 'created'})" ui-sref-opts="{reload: true, inherit: false}"
+       ng-class="{filled: galleryCtrl.filterMode == 'created',
+                  outlined: galleryCtrl.filterMode != 'created'}">
+        Show only projects I’ve created
+    </a>
+</div>
+<main>
+    <div id="results" ng-if="!galleryCtrl.projects.length">
+        No results found :(
+    </div>
+    <figure ng-repeat="project in galleryCtrl.projects"
+            ui-sref="project({id: project.id})">
+        <img ng-src="{{project.imageUri | toImageUrl}}">
+        <figcaption>
+            <h1>{{project.title}}</h1>
+            <h2>{{project.subtitle}}</h2>
+        </figcaption>
+    </figure>
+    <button class="filled" id="previous-page"
+            ng-disabled="galleryCtrl.page == 1"
+            ng-if="!galleryCtrl.query && galleryCtrl.filterMode == 'all'"
+            ui-sref=".({page: galleryCtrl.page - 1})">
+        Previous
+    </button>
+    <button class="filled" id="next-page"
+            ng-disabled="!galleryCtrl.projects.length || galleryCtrl.projects.length < 6"
+            ng-if="!galleryCtrl.query && galleryCtrl.filterMode == 'all'"
+            ui-sref=".({page: galleryCtrl.page + 1})">
+        Next
+    </button>
+</main>

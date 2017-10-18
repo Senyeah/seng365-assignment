@@ -1,0 +1,138 @@
+@import 'variables';
+@import 'global';
+
+h2.subtitle {
+    margin: -0.25rem 0 2.5rem;
+    font-weight: normal;
+    color: $subtitle-text;
+}
+
+h3 {
+    font-weight: 500;
+}
+
+#hero-image img {
+    display: block;
+    margin: 0 auto;
+
+    width: 900px;
+    max-height: 500px;
+}
+
+#pledge-progress {
+    margin: 3rem 0;
+
+    h3 {
+        margin-top: 0;
+    }
+
+    > div {
+        @extend %spaced-header;
+    }
+
+    .progress-indicator {
+        width: 100%;
+    }
+}
+
+#owner-settings {
+    @extend %spaced-header;
+
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 1rem;
+    background-color: $background-hint;
+
+    .danger {
+        background-color: red;
+        border-color: red;
+    }
+
+    button {
+        margin: 0 1rem;
+    }
+}
+
+aside {
+    float: left;
+    width: 45%;
+
+    margin: 0 1.5rem 0 0;
+    box-sizing: border-box;
+
+    padding: 1rem;
+    background-color: $background-hint;
+
+    ol {
+        margin: 0 0 1rem 0;
+        padding: 0;
+        list-style: none;
+
+        li {
+            @extend %spaced-header;
+            line-height: 2;
+
+            span:first-child {
+                font-weight: 500;
+            }
+        }
+    }
+
+    button {
+        width: 100%;
+    }
+}
+
+article {
+    overflow: hidden;
+
+    margin: 3rem 0;
+    line-height: 1.5;
+
+    & + section {
+        clear: both;
+    }
+}
+
+article + section, section + section {
+    margin-top: 3rem;
+}
+
+section.grid-items {
+    > div {
+        display: grid;
+        grid-gap: 1rem;
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .item {
+        padding: 1rem;
+
+        background-color: $background-hint;
+        border-radius: 5px;
+
+        h1 {
+            color: #505050;
+            margin: 0 0 0.75rem;
+            font-size: 14pt;
+            font-weight: 500;
+        }
+
+        p {
+            margin: 0.75rem 0 0;
+        }
+
+        &.creator p {
+            margin: 0;
+        }
+    }
+}
+
+section#creators > div {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+section#backers > div {
+    grid-template-columns: repeat(5, 1fr);
+}

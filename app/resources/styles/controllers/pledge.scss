@@ -1,0 +1,65 @@
+@import 'variables';
+@import 'global';
+
+#pledge-modal {
+    position: fixed;
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    top: 0;
+    left: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    background-color: rgba(0, 0, 0, 0.4);
+
+    main {
+        width: $container-width / 2;
+
+        padding: 1rem 2rem;
+        box-sizing: border-box;
+
+        background-color: $background-hint;
+    }
+
+    header {
+        @extend %spaced-header;
+        align-items: center;
+        margin-bottom: 0.3rem;
+
+        h1 {
+            font-weight: 500;
+            font-size: 15pt;
+        }
+
+        img {
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+        }
+    }
+
+    input[type='number'], input[type='text'], #anonymous-pledge {
+        width: 100%;
+        padding: 0.5rem 1rem;
+        box-sizing: border-box;
+        margin: 0.5rem 0;
+    }
+
+    #anonymous-pledge {
+        padding: 0.25rem 0;
+
+        input {
+            margin: -0.25rem 0.5rem 0 0;
+        }
+    }
+
+    button {
+        margin: 0.7rem 0 0.7rem auto;
+    }
+
+}
+

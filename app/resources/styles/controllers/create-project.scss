@@ -1,0 +1,58 @@
+@import 'variables';
+
+.title-pair {
+    display: flex;
+
+    > input {
+        padding: 0.75rem 1rem;
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+
+    & + h3 {
+        margin-top: 2rem;
+    }
+}
+
+.title-pair, textarea {
+    margin: 0.5rem 0;
+}
+
+button#new-reward, button#submit-project {
+    margin: 1rem 0;
+}
+
+textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 1rem;
+    min-height: 150px;
+}
+
+#project-rewards-list {
+    padding: 0;
+}
+
+#new-reward {
+    width: 100%;
+    background-color: inherit;
+
+    &:hover {
+        color: $hint;
+    }
+
+    &:active {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+}
+
+#submit-project {
+    float: right;
+}
+
+input[type="file"] {
+    background-color: inherit;
+    padding: 0;
+}

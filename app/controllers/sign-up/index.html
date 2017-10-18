@@ -1,0 +1,15 @@
+<section id="sign-in" class="full-screen">
+    <div>
+        <h1 id="error-message" ng-if="signUpCtrl.error" ng-bind="signUpCtrl.error"></h1>
+
+        <input type="text" placeholder="Username" ng-model="signUpCtrl.user.username">
+        <input type="email" placeholder="Email Address" ng-model="signUpCtrl.user.email">
+        <input type="text" placeholder="Location" ng-model="signUpCtrl.user.location">
+
+        <input type="password" placeholder="Password" ng-model="signUpCtrl.user.password">
+
+        <button class="filled" ng-disabled="!signUpCtrl.isValid" ng-click="signUpCtrl.submit()">
+            {{signUpCtrl.buttonText}}
+        </button>
+    </div>
+</section>

@@ -1,0 +1,21 @@
+<div id="pledge-modal">
+    <main>
+        <header>
+            <h1>Pledge to Project</h1>
+            <img ui-sref="^." src="/resources/images/close.svg">
+        </header>
+
+        <input type="number" ng-model="pledgeCtrl.amount" placeholder="Amount (Dollars)">
+        <input type="text" ng-model="pledgeCtrl.card" placeholder="Credit Card Number">
+
+        <div id="anonymous-pledge">
+            <input id="pledge-checkbox" type="checkbox" ng-model="pledgeCtrl.isAnonymous">
+            <label for="pledge-checkbox">Pledge Anonymously</label>
+        </div>
+
+        <button class="filled" ng-click="pledgeCtrl.pay()"
+                ng-disabled="!pledgeCtrl.amount || !pledgeCtrl.card">
+            Pay {{pledgeCtrl.amount || 0 | currency : '$'}}
+        </button>
+    </main>
+</div>

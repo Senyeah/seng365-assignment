@@ -1,0 +1,36 @@
+<div class="title-pair">
+    <input type="text" ng-model="createProjectCtrl.project.title" placeholder="Title">
+    <input type="text" ng-model="createProjectCtrl.project.subtitle" placeholder="Subtitle">
+</div>
+
+<textarea ng-model="createProjectCtrl.project.description" placeholder="Description"></textarea>
+
+<div class="title-pair">
+    <input type="number" ng-model="createProjectCtrl.project.target" placeholder="Target (Dollars)">
+</div>
+
+<h3>Rewards</h3>
+
+<ul id="project-rewards-list">
+    <li class="title-pair" ng-repeat="reward in createProjectCtrl.project.rewards">
+        <input type="text" ng-model="reward.description" placeholder="Reward Description">
+        <input type="number" ng-model="reward.amount" placeholder="Reward Cost (Dollars)">
+    </li>
+</ul>
+
+<button id="new-reward" class="outlined"
+        ng-click="createProjectCtrl.addReward()">
+    Add New Reward
+</button>
+
+<h3>Project Image</h3>
+
+<form method="put" enctype="multipart/form-data">
+    <input type="file" name="image">
+</form>
+
+<button id="submit-project" class="filled"
+        ng-disabled="!createProjectCtrl.isValid"
+        ng-click="createProjectCtrl.createProject()">
+    Create Project
+</button>

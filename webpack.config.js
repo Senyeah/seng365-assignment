@@ -69,7 +69,8 @@ module.exports = {
         extensions: ['*', '.js', '.json', '.css', '.scss'],
         alias: {
             styles: path.resolve(__dirname, './app/resources/styles'),
-            controllers: path.resolve(__dirname, './app/controllers')
+            controllers: path.resolve(__dirname, './app/controllers'),
+            json: path.resolve(__dirname)
         }
     }
 }

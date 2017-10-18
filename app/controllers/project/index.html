@@ -1,0 +1,85 @@
+<div ui-view="modal"></div>
+<h2 class="subtitle">{{projectCtrl.project.subtitle}}</h2>
+
+<section id="hero-image" class="full-screen">
+    <img ng-src="{{projectCtrl.project.imageUri | toImageUrl}}">
+</section>
+
+<div id="pledge-progress">
+    <div>
+        <h3>Progress</h3>
+        <h3>{{projectCtrl.project.target / 100 | currency : '$' : 0}}</h3>
+    </div>
+    <progress-indicator current="{{projectCtrl.project.progress.currentPledged}}"
+                        goal="{{projectCtrl.project.target}}">
+    </progress-indicator>
+</div>
+<div id="owner-settings" ng-if="projectCtrl.currentUserOwnsProject">
+    <button ng-click="projectCtrl.close()"
+            ng-if="projectCtrl.project.open"
+            class="filled danger">
+        Close Project
+    </button>
+    <button class="filled">Upload Image</button>
+</div>
+<article>
+    <aside id="project-info">
+        <ol>
+            <li>
+                <span>Project Created</span>
+                <span>{{projectCtrl.project.creationDate | date: 'd MMMM yyyy' }}</span>
+            </li>
+            <li>
+                <span>Amount Pledged</span>
+                <span>{{projectCtrl.project.progress.currentPledged / 100 | currency : '$' : 2}}</span>
+            </li>
+            <li>
+                <span>Target Amount</span>
+                <span>{{projectCtrl.project.target / 100 | currency : '$' : 2}}</span>
+            </li>
+            <li>
+                <span>Number of Backers</span>
+                <span>{{projectCtrl.uniqueBackers.length}}</span>
+            </li>
+            <li>
+                <span>Open to Pledges?</span>
+                <span>{{projectCtrl.project.open ? 'Yes' : 'No'}}</span>
+            </li>
+        </ol>
+        <button ng-disabled="!projectCtrl.project.open || !User.isLoggedIn"
+                ng-if="!projectCtrl.currentUserOwnsProject"
+                ui-sref=".pledge" class="filled">
+            Pledge to this project
+        </button>
+    </aside>
+    {{projectCtrl.project.description}}
+</article>
+
+<section class="grid-items">
+    <h3>Rewards</h3>
+    <div>
+        <div class="item" ng-repeat="reward in projectCtrl.project.rewards">
+            <h1>Pledge {{reward.amount / 100 | currency : '$' : 0}}</h1>
+            <p>{{reward.description}}</p>
+        </div>
+    </div>
+</section>
+
+<section id="backers" class="grid-items" ng-if="projectCtrl.uniqueBackers.length">
+    <h3>Recent Pledges</h3>
+    <div>
+        <div class="item" ng-repeat="backer in projectCtrl.uniqueBackers | limitTo: 5">
+            <h1>{{backer.amount / 100 | currency : '$' : 2}}</h1>
+            <p>{{backer.username}}</p>
+        </div>
+    </div>
+</section>
+
+<section id="creators" class="grid-items">
+    <h3>Creators</h3>
+    <div>
+        <div class="item creator" ng-repeat="creator in projectCtrl.project.creators">
+            <p>{{creator.username}}</p>
+        </div>
+    </div>
+</section>

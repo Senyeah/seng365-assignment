@@ -1,0 +1,14 @@
+<section id="sign-in" class="full-screen">
+    <div>
+        <h1 id="error-message" ng-if="signInCtrl.error" ng-bind="signInCtrl.error"></h1>
+
+        <input type="text" placeholder="Username or Email Address" ng-model="signInCtrl.user.email">
+        <input type="password" placeholder="Password" ng-model="signInCtrl.user.password">
+
+        <button class="filled"
+                ng-click="signInCtrl.submit()"
+                ng-disabled="!signInCtrl.isValid">
+            Sign In
+        </button>
+    </div>
+</section>
